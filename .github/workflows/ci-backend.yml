@@ -1,0 +1,44 @@
+name: CI/CD Backend
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'back/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'back/**'
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./back
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Build with Maven
+        run: mvn clean verify
+          
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: ${{ github.workspace }}/back/target/site/jacoco
+          
+      - name: Test Report
+        uses: phoenix-actions/test-reporting@v8
+        if: success() || failure()
+        with:
+          name: Tests Backend
+          path: back/target/surefire-reports/*.xml
+          reporter: java-junit
