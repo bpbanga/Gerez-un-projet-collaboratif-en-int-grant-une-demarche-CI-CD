@@ -28,8 +28,6 @@ jobs:
       # 1️ Récupérer le code du repo
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       # 2️ Installer Node.js 18 et activer le cache npm pour accélérer l'installation
       - name: Set up Node.js
@@ -74,6 +72,8 @@ jobs:
       # 1️ Récupérer le code du repo
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depht: 0
 
       # 2️ Installer Node.js (nécessaire pour TypeScript/Angular)
       - name: Set up Node.js
@@ -93,7 +93,7 @@ jobs:
         with:
           projectBaseDir: front                    
           args: >
-            -Dsonar.projectKey=bpbanga_bobapp-frontend    
+            -Dsonar.projectKey=bpbanga222309_bobapp-frontend    
             -Dsonar.organization=bpbanga222309           
             -Dsonar.sources=src                         
             -Dsonar.tests=src                           
