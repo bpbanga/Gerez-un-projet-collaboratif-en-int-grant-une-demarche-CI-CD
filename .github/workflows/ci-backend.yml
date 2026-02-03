@@ -90,6 +90,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify sonar:sonar \
-              -Dsonar.projectKey=bpbanga_bobapp-backend \
+              -Dsonar.projectKey=bpbanga222309_bobapp-backend \
               -Dsonar.login=${SONAR_TOKEN} \
               -Dsonar.qualitygate.wait=true  
