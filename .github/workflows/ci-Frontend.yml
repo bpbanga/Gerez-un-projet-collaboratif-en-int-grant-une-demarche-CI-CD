@@ -16,11 +16,9 @@ jobs:
   test-frontend:
     name: Tests Frontend (Angular)
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./front
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,11 +50,9 @@ jobs:
     name: SonarCloud Frontend
     runs-on: ubuntu-latest
     needs: test-frontend
-
     defaults:
       run:
         working-directory: ./front
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -76,7 +72,7 @@ jobs:
         with:
           projectBaseDir: front
           args: >
-            -Dsonar.projectKey=bpbanga_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+            -Dsonar.projectKey=bpbanga_bobapp-frontend
             -Dsonar.organization=bpbanga222309
             -Dsonar.sources=src
             -Dsonar.tests=src
