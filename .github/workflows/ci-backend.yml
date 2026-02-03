@@ -1,38 +1,37 @@
-# ============================
-# CI/CD Backend
-# ============================
-# Déclenchement du workflow :
-# - à chaque push sur main dans le dossier 'back/**'
-# - à chaque pull request ciblant main avec des changements dans 'back/**' ou le workflow
-name: CI/CD Backend
+name: Backend CI/CD
 
+# Déclenche le workflow sur push ou pull request sur la branche main
+# uniquement si des fichiers du backend changent
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
     paths:
       - 'back/**'
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
     paths:
       - 'back/**'
       - '.github/workflows/**'
 
 jobs:
-
   # ============================
-  # JOB 1 : TEST BACKEND
+  # JOB 1 : TESTS BACKEND
   # ============================
   test-backend:
-    name: Tests Backend
+    name: Run Backend Tests
     runs-on: ubuntu-latest
+
+    # Définit le répertoire par défaut pour toutes les commandes
     defaults:
       run:
         working-directory: ./back
-    steps:
-      # Récupération du code source
-      - uses: actions/checkout@v4
 
-      # Installation de Java 17 (nécessaire pour Maven et tests)
+    steps:
+      # 1️⃣ Récupération du code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Installation de Java 17 avec Maven
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -40,18 +39,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Compilation et exécution des tests avec Maven
+      # 3️⃣ Build du projet et exécution des tests
       - name: Build with Maven
         run: mvn clean verify
 
-      # Upload du rapport de couverture JaCoCo (pour SonarCloud)
+      # 4️⃣ Upload du rapport de couverture JaCoCo pour les jobs suivants ou suivi manuel
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: ${{ github.workspace }}/back/target/site/jacoco
 
-      # Génération du rapport de tests pour GitHub Actions
+      # 5️⃣ Test reporting dans GitHub Actions
       - name: Test Report
         uses: phoenix-actions/test-reporting@v8
         if: success() || failure()
@@ -68,14 +67,18 @@ jobs:
     # Ce job ne démarre QUE si les tests ont réussi
     needs: test-backend
     runs-on: ubuntu-latest
+
+    # Définit le répertoire par défaut pour toutes les commandes
     defaults:
       run:
         working-directory: ./back
-    steps:
-      # Récupération du code source
-      - uses: actions/checkout@v4
 
-      # Installation de Java 17 pour SonarCloud
+    steps:
+      # 1️⃣ Récupération du code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Installation de Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -83,17 +86,21 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # Exécution de l'analyse SonarCloud
-      # Le Quality Gate est bloquant : si KO, le pipeline échoue
-      - name: SonarCloud analysis (Quality Gate)
+      # 3️⃣ Analyse SonarCloud avec Quality Gate bloquant
+      # Les secrets sont utilisés ici pour ne pas exposer ton token
+      - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B sonar:sonar \
+          mvn -B verify \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=bpbanga_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
             -Dsonar.organization=bpbanga222309 \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${SONAR_TOKEN} \
+            -Dsonar.sources=src/main/java \
+            -Dsonar.tests=src/test/java \
             -Dsonar.java.binaries=target/classes \
+            -Dsonar.java.test.binaries=target/test-classes \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
             -Dsonar.qualitygate.wait=true
