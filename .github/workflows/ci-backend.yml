@@ -26,8 +26,6 @@ jobs:
       # 1️ Récupération du code source
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       # 2️ Installation de Java 17 et configuration de Maven
       - name: Set up JDK 17
