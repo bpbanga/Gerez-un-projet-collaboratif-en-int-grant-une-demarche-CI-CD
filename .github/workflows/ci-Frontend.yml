@@ -4,7 +4,10 @@ name: CI/CD Frontend
 # ============================
 on:
   push:
-    branches: [ "main" ]                     
+    branches: [ "main" ]
+    paths:
+    - 'back/**'
+    - '.github/workflows/**'
   pull_request:
     branches: [ "main" ]               
     paths:
