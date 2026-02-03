@@ -2,12 +2,12 @@ name: CI/CD Backend
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "main" ]
     paths:
       - 'back/**'
       - '.github/workflows/**'
   pull_request:
-    branches: [ "**" ]
+    branches: [ "main" ]
     paths:
       - 'back/**'
       - '.github/workflows/**'
