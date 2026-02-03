@@ -1,15 +1,11 @@
-name: Backend CI/CD
+name: CI/CD Backend
 
-# ============================
-# Déclencheurs du workflow
-# ============================
-# Le workflow se déclenche uniquement sur la branche main
-# et seulement si des fichiers du backend ont changé
 on:
   push:
     branches: [ "main" ]
     paths:
       - 'back/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -17,24 +13,16 @@ on:
       - '.github/workflows/**'
 
 jobs:
-  # ============================
-  # JOB 1 : TESTS BACKEND
-  # ============================
   test-backend:
     name: Run Backend Tests
     runs-on: ubuntu-latest
-
-    # Définit le répertoire par défaut pour toutes les commandes
     defaults:
       run:
         working-directory: ./back
-
     steps:
-      # 1️⃣ Récupération du code source
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Installation de Java 17 avec Maven
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -42,18 +30,15 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3️⃣ Build du projet et exécution des tests
       - name: Build with Maven
         run: mvn clean verify
 
-      # 4️⃣ Upload du rapport de couverture JaCoCo pour les jobs suivants ou suivi manuel
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: ${{ github.workspace }}/back/target/site/jacoco
 
-      # 5️⃣ Test reporting dans GitHub Actions
       - name: Test Report
         uses: phoenix-actions/test-reporting@v8
         if: success() || failure()
@@ -62,26 +47,17 @@ jobs:
           path: back/target/surefire-reports/*.xml
           reporter: java-junit
 
-  # ============================
-  # JOB 2 : ANALYSE SONARCLOUD
-  # ============================
   sonarcloud-backend:
     name: SonarCloud Backend
-    # Ce job ne démarre QUE si les tests ont réussi
-    needs: test-backend
     runs-on: ubuntu-latest
-
-    # Définit le répertoire par défaut pour toutes les commandes
+    needs: test-backend
     defaults:
       run:
         working-directory: ./back
-
     steps:
-      # 1️⃣ Récupération du code source
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Installation de Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -89,10 +65,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 3️⃣ Analyse SonarCloud avec Quality Gate bloquant
-      # Utilisation du token via secrets pour ne pas l’exposer
       - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify sonar:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.qualitygate.wait=true
-
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=bpbanga_bobapp-backend -Dsonar.login=${SONAR_TOKEN} -Dsonar.qualitygate.wait=true
