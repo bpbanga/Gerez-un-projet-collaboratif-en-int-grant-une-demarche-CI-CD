@@ -1,7 +1,10 @@
 name: Backend CI/CD
 
-# Déclenche le workflow sur push ou pull request sur la branche main
-# uniquement si des fichiers du backend changent
+# ============================
+# Déclencheurs du workflow
+# ============================
+# Le workflow se déclenche uniquement sur la branche main
+# et seulement si des fichiers du backend ont changé
 on:
   push:
     branches: [ "main" ]
@@ -87,13 +90,13 @@ jobs:
           cache: maven
 
       # 3️⃣ Analyse SonarCloud avec Quality Gate bloquant
-      # Les secrets sont utilisés ici pour ne pas exposer ton token
+      # Utilisation du token via secrets pour ne pas l’exposer
       - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B verify \
-            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar \
             -Dsonar.projectKey=bpbanga_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
             -Dsonar.organization=bpbanga222309 \
             -Dsonar.host.url=https://sonarcloud.io \
