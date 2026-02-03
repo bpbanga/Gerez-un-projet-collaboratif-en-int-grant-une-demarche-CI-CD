@@ -1,5 +1,7 @@
 # BobApp
 
+This application displays a sentence containing a new joke each time a button is clicked.
+
 Clone project:
 
 > git clone XXXXX
