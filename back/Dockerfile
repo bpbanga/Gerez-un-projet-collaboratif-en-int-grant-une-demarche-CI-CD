@@ -1,10 +1,26 @@
-FROM maven:3.6.3-jdk-11-slim AS build
-RUN mkdir -p /workspace
+# =========================
+# BUILD STAGE
+# =========================
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+
 WORKDIR /workspace
-COPY pom.xml /workspace
-COPY src /workspace/src
-RUN mvn -B -f pom.xml clean package -DskipTests
-FROM openjdk:11-jdk-slim
+
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
+
+COPY src ./src
+RUN mvn -B clean package -DskipTests
+
+# =========================
+# RUNTIME STAGE
+# =========================
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
 COPY --from=build /workspace/target/*.jar app.jar
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar","app.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
