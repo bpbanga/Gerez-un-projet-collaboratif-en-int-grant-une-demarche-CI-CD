@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Joke } from '../model/joke.model';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class JokesService {
 
-  private pathService = 'api/joke';
+  private pathService = `${environment.apiUrl}/api/joke`;
 
   private subject: BehaviorSubject<Joke | null> = new BehaviorSubject<Joke | null>(null);
 
@@ -17,7 +19,10 @@ export class JokesService {
   }
 
   public getRandomJoke(): void {
-    this.httpClient.get<Joke>(this.pathService).subscribe((joke: Joke) => this.subject.next(joke));
+    this.httpClient.get<Joke>(this.pathService).subscribe({
+      next: (joke: Joke) => this.subject.next(joke),
+      error: err => console.error('Erreur API joke', err)
+    });
   }
 
   public joke$(): Observable<Joke | null > {
