@@ -52,7 +52,6 @@ jobs:
       # 5️ Publication du rapport de tests dans GitHub Actions
       - name: Test Report
         uses: phoenix-actions/test-reporting@v9
-        if: success() || failure()   
         with:
           name: Tests Backend
           path: back/target/surefire-reports/*.xml
@@ -96,7 +95,7 @@ jobs:
   docker-backend:
     needs: sonarcloud-backend
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/head/main'
   
     steps:
       - uses: actions/checkout@v4
