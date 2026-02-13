@@ -88,14 +88,16 @@ jobs:
       - name: Build and analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean verify sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify sonar:sonar \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
   # ============================
   # JOB 3 : Docker backend
   # ============================
   docker-backend:
     needs: sonarcloud-backend
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/head/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
   
     steps:
       - uses: actions/checkout@v4
