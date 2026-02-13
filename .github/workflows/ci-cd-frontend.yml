@@ -6,7 +6,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-    - 'back/**'
+    - 'front/**'
     - '.github/workflows/**'
   pull_request:
     branches: [ "main" ]               
@@ -104,8 +104,10 @@ jobs:
   # JOB 3 : Docker Frontend
   # ============================        
   docker-frontend:
+    name: Docker Frontend
     needs: sonarcloud-frontend
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
