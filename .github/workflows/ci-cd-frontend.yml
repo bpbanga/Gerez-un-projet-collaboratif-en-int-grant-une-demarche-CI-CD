@@ -98,8 +98,9 @@ jobs:
             -Dsonar.sources=src                         
             -Dsonar.tests=src                           
             -Dsonar.test.inclusions=**/*.spec.ts        
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info  
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info        
+            -Dsonar.typescript.lcov.reportPaths=coverage/bobapp/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+       
   # ============================
   # JOB 3 : Docker Frontend
   # ============================        
