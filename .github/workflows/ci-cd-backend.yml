@@ -21,10 +21,10 @@ jobs:
   # ============================
   test-backend:
     name: Run Backend Tests
-    runs-on: ubuntu-latest       
+    runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./back  
+        working-directory: ./back
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -43,13 +43,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: ${{ github.workspace }}/back/target/jacoco/jacoco.xml
+          path: target/jacoco/jacoco.xml
+
+      - name: Upload compiled classes for SonarCloud
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-classes
+          path: |
+            target/classes
+            target/test-classes
 
       - name: Test Report
         uses: phoenix-actions/test-reporting@v9
         with:
           name: Backend Tests
-          path: back/target/surefire-reports/*.xml
+          path: target/surefire-reports/*.xml
           reporter: java-junit
 
   # ============================
@@ -73,18 +81,28 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
+          cache: maven  
 
-      - name: Compile Backend for SonarCloud
-        run: mvn compile    
+      - name: Download compiled classes from tests
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-classes
+          path: target
+
+      - name: Download JaCoCo report
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/jacoco
 
       - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          mvn sonar:sonar \
+        run: mvn sonar:sonar \
               -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco/jacoco.xml
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco/jacoco.xml \
+              -Dsonar.java.binaries=target/classes \
+              -Dsonar.java.test.binaries=target/test-classes
 
   # ============================
   # JOB 3 : Docker backend
