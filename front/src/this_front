@@ -2,11 +2,11 @@
 
 ## Liens SonarCloud
 
-### Backend
-- Projet : [BobApp Backend – SonarCloud](https://sonarcloud.io/project/xxxx)
+### Frontend
+- Projet : [BobApp Frontend – SonarCloud](https://sonarcloud.io/project/yyyy)
 - Commit : 4b14bd7f
 - Coverage New Code : 0% (version gratuite SonarCloud)
 - Bugs : 0
 - Vulnerabilities : 0
-- Code Smells : 12
+- Code Smells : 8
 - Quality Gate : PASSED
