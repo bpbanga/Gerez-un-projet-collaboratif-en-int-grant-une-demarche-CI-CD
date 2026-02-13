@@ -75,6 +75,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Compile Backend for SonarCloud
+        run: mvn compile    
+
       - name: Analyze with SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
