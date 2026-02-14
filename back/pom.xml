@@ -22,7 +22,6 @@
 		<sonar.tests>src/test/java</sonar.tests>
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
 		<sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
-		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies> 
 
@@ -68,9 +67,6 @@
 					<goals>
 						<goal>report</goal>
 					</goals>
-					<configuration>
-						<outputDirectory>${project.build.directory}/jacoco</outputDirectory>
-					</configuration>
 				</execution>
 			</executions>
 		</plugin>
