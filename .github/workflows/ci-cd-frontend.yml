@@ -82,17 +82,17 @@ jobs:
           name: frontend-coverage
           path: front/coverage
 
-      # 2️ Installer Node.js (nécessaire pour TypeScript/Angular)
+      # 3 Installer Node.js (nécessaire pour TypeScript/Angular)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      # 3️ Installer les dépendances npm
+      # 4 Installer les dépendances npm
       - name: Install dependencies
         run: npm ci
 
-      # 4️ Analyse SonarCloud
+      # 5 Analyse SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
